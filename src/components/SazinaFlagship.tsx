@@ -68,7 +68,7 @@ export default function SazinaFlagship() {
     <main className="min-h-screen bg-[#0A0A0A] text-[#FDF5E6] font-sans selection:bg-[#D4AF37] selection:text-black overflow-hidden flex flex-col">
       
       {/* 1. BRUTALIST GLASS NAV */}
-      <nav className="fixed top-0 w-full z-50 flex justify-between items-center p-6 bg-black/40 backdrop-blur-md border-b border-[#D4AF37]/20">
+      <nav className="fixed top-0 w-full z-50 h-20 md:h-24 flex justify-between items-center p-6 bg-black/40 backdrop-blur-md border-b border-[#D4AF37]/20">
         <div className="flex items-center gap-4 md:gap-6">
           <div className="flex flex-col uppercase tracking-[0.3em] font-serif">
             <span className="text-sm text-[#D4AF37]">Sazina</span>
