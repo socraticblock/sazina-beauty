@@ -72,7 +72,7 @@ export default function SazinaFlagship() {
         <div className="flex items-center gap-4 md:gap-6">
           <div className="flex flex-col uppercase tracking-[0.3em] font-serif">
             <span className="text-sm text-[#D4AF37]">Sazina</span>
-            <span className="text-[0.6rem] text-white/50 tracking-[0.4em]">{t.academy}</span>
+            <span className={`text-[0.6rem] text-white/50 ${lang === 'ka' ? 'tracking-[0.15em]' : 'tracking-[0.4em]'}`}>{t.academy}</span>
           </div>
 
           {/* Language Switcher Dropdown */}
@@ -113,7 +113,7 @@ export default function SazinaFlagship() {
           </div>
         </div>
 
-        <button className="text-xs uppercase tracking-widest border border-[#D4AF37]/50 px-4 py-2 hover:bg-[#D4AF37] hover:text-black transition-colors duration-300">
+        <button className={`text-xs uppercase whitespace-nowrap border border-[#D4AF37]/50 px-4 py-2 hover:bg-[#D4AF37] hover:text-black transition-colors duration-300 ${lang === 'ka' ? 'tracking-wider' : 'tracking-widest'}`}>
           {t.bookNav}
         </button>
       </nav>
