@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, useMotionValue, useTransform } from "framer-motion";
-import { MoveRight, Sparkles, MapPin } from "lucide-react";
+import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
+import { MoveRight, Sparkles, MapPin, ChevronDown, Check } from "lucide-react";
 
 const dictionary = {
   ka: {
@@ -37,9 +37,12 @@ export default function SazinaFlagship() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [lang, setLang] = useState<"ka" | "en">("ka");
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const dragX = useMotionValue(50); // Start at 50%
 
   const t = dictionary[lang];
+  const flags = { ka: "🇬🇪", en: "🇬🇧" };
 
   // Update drag handle on mouse/touch move
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -66,27 +69,47 @@ export default function SazinaFlagship() {
       
       {/* 1. BRUTALIST GLASS NAV */}
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center p-6 bg-black/40 backdrop-blur-md border-b border-[#D4AF37]/20">
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
           <div className="flex flex-col uppercase tracking-[0.3em] font-serif">
             <span className="text-sm text-[#D4AF37]">Sazina</span>
             <span className="text-[0.6rem] text-white/50 tracking-[0.4em]">{t.academy}</span>
           </div>
 
-          {/* Language Switcher */}
-          <div className="flex items-center gap-3 text-[0.6rem] tracking-widest font-bold border-l border-white/10 pl-6 h-6">
+          {/* Language Switcher Dropdown */}
+          <div className="relative border-l border-white/10 pl-4 md:pl-6">
             <button 
-              onClick={() => setLang("ka")}
-              className={`hover:text-[#D4AF37] transition-colors ${lang === "ka" ? "text-[#D4AF37]" : "text-white/40"}`}
+              onClick={() => setIsLangOpen(!isLangOpen)}
+              className="flex items-center gap-2 text-[0.6rem] md:text-xs font-bold tracking-widest text-[#D4AF37] hover:text-white transition-colors"
             >
-              KA
+              <span>{flags[lang]}</span>
+              <span className="uppercase">{lang}</span>
+              <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isLangOpen ? 'rotate-180' : ''}`} />
             </button>
-            <span className="text-white/10">/</span>
-            <button 
-              onClick={() => setLang("en")}
-              className={`hover:text-[#D4AF37] transition-colors ${lang === "en" ? "text-[#D4AF37]" : "text-white/40"}`}
-            >
-              EN
-            </button>
+
+            <AnimatePresence>
+              {isLangOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full left-0 mt-4 bg-black/90 backdrop-blur-2xl border border-[#D4AF37]/30 min-w-[120px] shadow-2xl p-2 z-[60]"
+                >
+                  {(["ka", "en"] as const).map((l) => (
+                    <button
+                      key={l}
+                      onClick={() => {
+                        setLang(l);
+                        setIsLangOpen(false);
+                      }}
+                      className={`flex items-center justify-between w-full px-3 py-2 text-[0.6rem] tracking-[0.2em] uppercase hover:bg-[#D4AF37]/10 transition-colors ${lang === l ? 'text-[#D4AF37]' : 'text-white/60'}`}
+                    >
+                      <span className="flex items-center gap-2"><span>{flags[l]}</span> {l}</span>
+                      {lang === l && <Check className="w-3 h-3" />}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -168,30 +191,48 @@ export default function SazinaFlagship() {
         </motion.div>
 
         {/* Hero Typography Overlay */}
-        <div className="absolute bottom-[480px] md:bottom-24 left-6 right-6 md:left-16 md:right-auto z-20 pointer-events-none max-w-full md:max-w-[45vw] text-left">
-          <h1 className="font-serif text-4xl md:text-7xl leading-[1.1] tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] uppercase">
+        <div className="absolute bottom-[380px] md:bottom-24 left-6 right-6 md:left-16 md:right-auto z-20 pointer-events-none max-w-full md:max-w-[45vw] text-left">
+          <h1 className={`${lang === 'ka' ? 'text-3xl md:text-7xl' : 'text-4xl md:text-7xl'} font-serif leading-[1.1] tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] uppercase transition-all duration-500`}>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#FDF5E6] italic">{t.heroTitle}</span>
           </h1>
         </div>
 
-        {/* 3. GLASSMORPHIC CONVERSION ENGINE */}
+        {/* 3. GLASSMORPHIC CONVERSION ENGINE (Accordion on Mobile) */}
         <div className="absolute bottom-12 left-6 right-6 md:bottom-24 md:left-auto md:right-16 z-30 pointer-events-auto w-auto md:max-w-sm">
-          <div className="p-6 bg-[#0a0a0a]/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex flex-col gap-4 shadow-2xl relative overflow-hidden group">
-            {/* Shimmer Effect Background */}
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent group-hover:animate-shimmer" />
-            
-            <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#D4AF37]">
-              <Sparkles className="w-3 h-3" />
-              <span>{t.elite}</span>
-            </div>
-            <div>
-              <h3 className="font-serif text-2xl text-white">{t.intensive}</h3>
-              <p className="text-xs text-white/50 tracking-wider mt-1">{t.mastery}</p>
-            </div>
-            <button className="mt-2 w-full bg-[#D4AF37] text-black py-3 px-6 text-xs font-bold uppercase tracking-[0.2em] flex flex-col items-center hover:bg-white transition-colors group">
-              <span className="flex justify-between items-center w-full">{t.bookGlow} <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
-              <span className="text-[0.6rem] opacity-70 normal-case mt-1">{t.bookGlowSub}</span>
+          <div className="bg-[#0a0a0a]/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex flex-col shadow-2xl relative overflow-hidden group">
+            {/* Header / Trigger */}
+            <button 
+              onClick={() => setIsExpanded(!isExpanded)}
+              disabled={typeof window !== 'undefined' && window.innerWidth >= 768}
+              className="w-full p-4 md:p-6 flex items-center justify-between text-left group/trigger"
+            >
+              <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#D4AF37]">
+                <Sparkles className="w-3 h-3" />
+                <span>{t.elite}</span>
+              </div>
+              <ChevronDown className={`md:hidden w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
             </button>
+
+            {/* Accordion Body */}
+            <motion.div 
+              initial={false}
+              animate={{ height: (typeof window !== 'undefined' && window.innerWidth >= 768) || isExpanded ? 'auto' : 0 }}
+              className="overflow-hidden md:h-auto"
+            >
+              <div className="px-4 pb-6 md:px-6 md:pb-6 flex flex-col gap-4 border-t border-white/5 md:border-none">
+                <div>
+                  <h3 className="font-serif text-xl md:text-2xl text-white">{t.intensive}</h3>
+                  <p className="text-[0.65rem] md:text-xs text-white/50 tracking-wider mt-1">{t.mastery}</p>
+                </div>
+                <button className="mt-2 w-full bg-[#D4AF37] text-black py-3 px-6 text-xs font-bold uppercase tracking-[0.2em] flex flex-col items-center hover:bg-white transition-colors group">
+                  <span className="flex justify-between items-center w-full">{t.bookGlow} <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
+                  <span className="text-[0.5rem] md:text-[0.6rem] opacity-70 normal-case mt-1">{t.bookGlowSub}</span>
+                </button>
+              </div>
+            </motion.div>
+            
+            {/* Shimmer Effect Background */}
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent group-hover:animate-shimmer pointer-events-none" />
           </div>
         </div>
       </section>
