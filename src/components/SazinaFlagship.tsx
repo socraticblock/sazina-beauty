@@ -65,7 +65,7 @@ export default function SazinaFlagship() {
   }, []);
 
   return (
-    <main className="h-screen h-[100dvh] bg-[#0A0A0A] text-[#FDF5E6] font-sans selection:bg-[#D4AF37] selection:text-black overflow-hidden flex flex-col">
+    <main className="h-screen h-[100svh] bg-[#0A0A0A] text-[#FDF5E6] font-sans selection:bg-[#D4AF37] selection:text-black overflow-hidden flex flex-col pb-16 md:pb-0">
       
       {/* 1. BRUTALIST GLASS NAV */}
       <nav className="fixed top-0 w-full z-50 h-20 md:h-24 flex justify-between items-center p-6 bg-black/40 backdrop-blur-md border-b border-[#D4AF37]/20">
@@ -249,9 +249,9 @@ export default function SazinaFlagship() {
       </section>
 
       {/* 4. THE TOUR INFINITE MARQUEE */}
-      <section className="h-16 md:h-[10vh] flex-shrink-0 border-y border-[#D4AF37]/20 bg-[#050505] flex items-center overflow-hidden whitespace-nowrap z-40">
+      <section className="fixed bottom-0 left-0 right-0 h-16 md:h-[10vh] border-y border-[#D4AF37]/20 bg-[#050505] flex items-center overflow-hidden whitespace-nowrap z-40">
         <motion.div 
-          className="flex items-center gap-12 text-sm md:text-lg uppercase tracking-[0.2em] font-light text-white/60"
+          className="flex items-center gap-12 text-sm md:text-lg uppercase tracking-tight font-light text-white/60"
           style={{ x: `${tickerPosition}%` }}
         >
           {Array.from({ length: 12 }).map((_, i) => (
