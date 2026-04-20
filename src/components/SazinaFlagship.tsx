@@ -249,9 +249,9 @@ export default function SazinaFlagship() {
       </section>
 
       {/* 4. THE TOUR INFINITE MARQUEE */}
-      <section className="h-[10vh] border-y border-[#D4AF37]/20 bg-[#050505] flex items-center overflow-hidden whitespace-nowrap">
+      <section className="h-16 md:h-[10vh] flex-shrink-0 border-y border-[#D4AF37]/20 bg-[#050505] flex items-center overflow-hidden whitespace-nowrap z-40">
         <motion.div 
-          className="flex items-center gap-12 text-sm md:text-lg uppercase tracking-[0.4em] font-light text-white/60"
+          className="flex items-center gap-12 text-sm md:text-lg uppercase tracking-[0.2em] font-light text-white/60"
           style={{ x: `${tickerPosition}%` }}
         >
           {Array.from({ length: 12 }).map((_, i) => (
