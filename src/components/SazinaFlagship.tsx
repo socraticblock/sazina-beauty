@@ -1,0 +1,219 @@
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
+import { motion, useMotionValue, useTransform } from "framer-motion";
+import { MoveRight, Sparkles, MapPin } from "lucide-react";
+
+const dictionary = {
+  ka: {
+    academy: "სილამაზის აკადემია",
+    bookNav: "დაჯავშნე ახლავე",
+    heroTitle: "დაეუფლე სელფ-მეიქაფის ხელოვნებას",
+    elite: "ელიტური მიღება",
+    intensive: "3-დღიანი ინტენსიური კურსი",
+    mastery: "სელფ-მეიქაფის მასტერკლასი",
+    bookGlow: "დაჯავშნე შენი ადგილი",
+    bookGlowSub: "პროფესიონალური შედეგის მისაღებად",
+    tbilisi: "თბილისის მასტერკლასი",
+    batumi: "ინტენსიური კურსი ბათუმში",
+    kutaisi: "ქუთაისი: ადგილები შევსებულია",
+  },
+  en: {
+    academy: "Beauty School",
+    bookNav: "Book Now",
+    heroTitle: "Self-Makeup Master",
+    elite: "Elite Admission",
+    intensive: "3-Day Intensive",
+    mastery: "Self-Makeup Mastery",
+    bookGlow: "Book Your Glow",
+    bookGlowSub: "to achieve professional results",
+    tbilisi: "Tbilisi Masterclass",
+    batumi: "Batumi Intensive",
+    kutaisi: "Kutaisi Sold Out",
+  }
+};
+
+export default function SazinaFlagship() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [lang, setLang] = useState<"ka" | "en">("ka");
+  const dragX = useMotionValue(50); // Start at 50%
+
+  const t = dictionary[lang];
+
+  // Update drag handle on mouse/touch move
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging || !containerRef.current) return;
+    const { left, width } = containerRef.current.getBoundingClientRect();
+    let newX = ((e.clientX - left) / width) * 100;
+    newX = Math.max(0, Math.min(newX, 100)); // Clamp between 0-100
+    dragX.set(newX);
+  };
+
+  const clipPathValue = useTransform(dragX, (val) => `polygon(${val}% 0%, 100% 0%, 100% 100%, ${val}% 100%)`);
+
+  // Infinite Scroll Marquee State
+  const [tickerPosition, setTickerPosition] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTickerPosition((prev) => (prev <= -100 ? 0 : prev - 0.005));
+    }, 16);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <main className="min-h-screen bg-[#0A0A0A] text-[#FDF5E6] font-sans selection:bg-[#D4AF37] selection:text-black overflow-hidden flex flex-col">
+      
+      {/* 1. BRUTALIST GLASS NAV */}
+      <nav className="fixed top-0 w-full z-50 flex justify-between items-center p-6 bg-black/40 backdrop-blur-md border-b border-[#D4AF37]/20">
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col uppercase tracking-[0.3em] font-serif">
+            <span className="text-sm text-[#D4AF37]">Sazina</span>
+            <span className="text-[0.6rem] text-white/50 tracking-[0.4em]">{t.academy}</span>
+          </div>
+
+          {/* Language Switcher */}
+          <div className="flex items-center gap-3 text-[0.6rem] tracking-widest font-bold border-l border-white/10 pl-6 h-6">
+            <button 
+              onClick={() => setLang("ka")}
+              className={`hover:text-[#D4AF37] transition-colors ${lang === "ka" ? "text-[#D4AF37]" : "text-white/40"}`}
+            >
+              KA
+            </button>
+            <span className="text-white/10">/</span>
+            <button 
+              onClick={() => setLang("en")}
+              className={`hover:text-[#D4AF37] transition-colors ${lang === "en" ? "text-[#D4AF37]" : "text-white/40"}`}
+            >
+              EN
+            </button>
+          </div>
+        </div>
+
+        <button className="text-xs uppercase tracking-widest border border-[#D4AF37]/50 px-4 py-2 hover:bg-[#D4AF37] hover:text-black transition-colors duration-300">
+          {t.bookNav}
+        </button>
+      </nav>
+
+      {/* 2. THE KINETIC REVEAL HERO (SPLIT-SCREEN) */}
+      <section 
+        className="relative flex-grow h-[85vh] w-full cursor-ew-resize select-none touch-none overflow-hidden"
+        ref={containerRef}
+        onPointerDown={() => setIsDragging(true)}
+        onPointerUp={() => setIsDragging(false)}
+        onPointerLeave={() => setIsDragging(false)}
+        onPointerCancel={() => setIsDragging(false)}
+        onPointerMove={handlePointerMove}
+      >
+        {/* 1. SOLID DARK BASE (BEFORE) */}
+        <div className="absolute inset-0 z-0 bg-black">
+          {/* Subtle Noise Overlay */}
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+        </div>
+
+        {/* Layer 1: Raw Texture (Background) */}
+        <div className="absolute inset-0 z-10">
+          <img 
+            src="/before.png" 
+            alt="Before" 
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_0_100px_rgba(0,0,0,0.8)] saturate-[0.85] brightness-[0.75] contrast-[0.95]"
+          />
+          {/* Portrait Vignette Blend */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_40%,_#000000_100%)] pointer-events-none opacity-40" />
+        </div>
+
+        {/* Layer 2: Snatched Look (Clipped Foreground) */}
+        <motion.div 
+          className="absolute inset-0 z-10 origin-left border-l border-[#D4AF37]/50 overflow-hidden"
+          style={{ clipPath: clipPathValue, WebkitClipPath: clipPathValue, filter: "saturate(1.1) contrast(1.05)" }}
+        >
+          {/* 1b. THEMATIC BACKDROP: AFTER (BRIGHT/VIBRANT) */}
+          <div className="absolute inset-0 z-0 bg-[#F5F5F0]">
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-[1.1] saturate-[1.1] blur-[8px]"
+              style={{ backgroundImage: "url('/studio-background-warm.png')" }} 
+            />
+            {/* Vanity Lighting Effects */}
+            <div className="absolute top-[20%] left-[15%] w-64 h-64 bg-[#FFF9E5]/50 blur-[80px] rounded-full animate-pulse duration-[4s]" />
+            <div className="absolute top-[20%] right-[15%] w-64 h-64 bg-[#FFF9E5]/50 blur-[80px] rounded-full animate-pulse duration-[5s]" />
+            <div className="absolute inset-0 bg-[#D4AF37]/5" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 opacity-40" />
+          </div>
+
+          <img 
+            src="/after1.png" 
+            alt="After" 
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none drop-shadow-[0_0_100px_rgba(0,0,0,0.8)] z-10"
+          />
+          {/* Portrait Vignette Blend */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle,_transparent_40%,_#000000_100%)] pointer-events-none opacity-40" />
+          <div className="absolute inset-0 bg-black/20" /> {/* Mood lighting */}
+        </motion.div>
+
+        {/* The Symmetry HUD (Drag Handle) */}
+        <motion.div 
+          className="absolute top-0 bottom-0 w-[1px] bg-[#D4AF37] z-50 shadow-[0_0_20px_rgba(212,175,55,0.6),0_0_40px_rgba(212,175,55,0.2)]"
+          style={{ left: useTransform(dragX, (val) => `${val}%`) }}
+        >
+          {/* Rim Light Effect on Line */}
+          <div className="absolute inset-y-0 -left-1 w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37]/30 to-transparent blur-[1px]" />
+          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-16 h-16 rounded-full border border-[#D4AF37] bg-black/30 backdrop-blur-xl flex items-center justify-center pointer-events-none">
+            <div className="w-12 h-12 rounded-full border-[0.5px] border-[#D4AF37]/50 flex items-center justify-center relative">
+               {/* Precision Crosshair */}
+               <div className="absolute w-full h-[0.5px] bg-[#D4AF37]/70" />
+               <div className="absolute h-full w-[0.5px] bg-[#D4AF37]/70" />
+               <div className="absolute w-2 h-2 border border-[#D4AF37] rounded-full" />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Hero Typography Overlay */}
+        <div className="absolute bottom-[480px] md:bottom-24 left-6 right-6 md:left-16 md:right-auto z-20 pointer-events-none max-w-full md:max-w-[45vw] text-left">
+          <h1 className="font-serif text-4xl md:text-7xl leading-[1.1] tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] uppercase">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#FDF5E6] italic">{t.heroTitle}</span>
+          </h1>
+        </div>
+
+        {/* 3. GLASSMORPHIC CONVERSION ENGINE */}
+        <div className="absolute bottom-12 left-6 right-6 md:bottom-24 md:left-auto md:right-16 z-30 pointer-events-auto w-auto md:max-w-sm">
+          <div className="p-6 bg-[#0a0a0a]/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex flex-col gap-4 shadow-2xl relative overflow-hidden group">
+            {/* Shimmer Effect Background */}
+            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent group-hover:animate-shimmer" />
+            
+            <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#D4AF37]">
+              <Sparkles className="w-3 h-3" />
+              <span>{t.elite}</span>
+            </div>
+            <div>
+              <h3 className="font-serif text-2xl text-white">{t.intensive}</h3>
+              <p className="text-xs text-white/50 tracking-wider mt-1">{t.mastery}</p>
+            </div>
+            <button className="mt-2 w-full bg-[#D4AF37] text-black py-3 px-6 text-xs font-bold uppercase tracking-[0.2em] flex flex-col items-center hover:bg-white transition-colors group">
+              <span className="flex justify-between items-center w-full">{t.bookGlow} <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
+              <span className="text-[0.6rem] opacity-70 normal-case mt-1">{t.bookGlowSub}</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. THE TOUR INFINITE MARQUEE */}
+      <section className="h-[10vh] border-y border-[#D4AF37]/20 bg-[#050505] flex items-center overflow-hidden whitespace-nowrap">
+        <motion.div 
+          className="flex items-center gap-12 text-sm md:text-lg uppercase tracking-[0.4em] font-light text-white/60"
+          style={{ x: `${tickerPosition}%` }}
+        >
+          {Array.from({ length: 12 }).map((_, i) => (
+            <React.Fragment key={i}>
+              <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#D4AF37]"/> {t.tbilisi}</span>
+              <span className="text-[#D4AF37]">///</span>
+              <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-[#D4AF37]"/> {t.batumi}</span>
+              <span className="text-[#D4AF37]">///</span>
+              <span className="line-through opacity-50">{t.kutaisi}</span>
+              <span className="text-[#D4AF37]">///</span>
+            </React.Fragment>
+          ))}
+        </motion.div>
+      </section>
+    </main>
+  );
+}
