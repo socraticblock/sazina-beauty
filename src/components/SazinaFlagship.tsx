@@ -120,9 +120,8 @@ export default function SazinaFlagship() {
 
       {/* 2. THE KINETIC REVEAL HERO (SPLIT-SCREEN) */}
       <section 
-        className="relative flex-grow h-[85vh] w-full cursor-ew-resize select-none touch-none overflow-hidden"
+        className="relative flex-grow h-[85vh] w-full select-none touch-none overflow-hidden"
         ref={containerRef}
-        onPointerDown={() => setIsDragging(true)}
         onPointerUp={() => setIsDragging(false)}
         onPointerLeave={() => setIsDragging(false)}
         onPointerCancel={() => setIsDragging(false)}
@@ -175,12 +174,20 @@ export default function SazinaFlagship() {
 
         {/* The Symmetry HUD (Drag Handle) */}
         <motion.div 
-          className="absolute top-0 bottom-0 w-[1px] bg-[#D4AF37] z-50 shadow-[0_0_20px_rgba(212,175,55,0.6),0_0_40px_rgba(212,175,55,0.2)]"
+          className="absolute top-0 bottom-0 w-12 -ml-6 z-40 flex items-center justify-center cursor-ew-resize group/handle"
           style={{ left: useTransform(dragX, (val) => `${val}%`) }}
+          onPointerDown={(e) => {
+            (e.target as HTMLElement).setPointerCapture(e.pointerId);
+            setIsDragging(true);
+          }}
         >
-          {/* Rim Light Effect on Line */}
-          <div className="absolute inset-y-0 -left-1 w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37]/30 to-transparent blur-[1px]" />
-          <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-16 h-16 rounded-full border border-[#D4AF37] bg-black/30 backdrop-blur-xl flex items-center justify-center pointer-events-none">
+          {/* Visible Line */}
+          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.6),0_0_40px_rgba(212,175,55,0.2)]">
+            {/* Rim Light Effect on Line */}
+            <div className="absolute inset-y-0 -left-1 w-[2px] bg-gradient-to-b from-transparent via-[#D4AF37]/30 to-transparent blur-[1px]" />
+          </div>
+
+          <div className="w-16 h-16 rounded-full border border-[#D4AF37] bg-black/30 backdrop-blur-xl flex items-center justify-center pointer-events-none group-hover/handle:scale-110 transition-transform duration-300">
             <div className="w-12 h-12 rounded-full border-[0.5px] border-[#D4AF37]/50 flex items-center justify-center relative">
                {/* Precision Crosshair */}
                <div className="absolute w-full h-[0.5px] bg-[#D4AF37]/70" />
@@ -190,49 +197,53 @@ export default function SazinaFlagship() {
           </div>
         </motion.div>
 
-        {/* Hero Typography Overlay */}
-        <div className="absolute bottom-[380px] md:bottom-24 left-6 right-6 md:left-16 md:right-auto z-20 pointer-events-none max-w-full md:max-w-[45vw] text-left">
-          <h1 className={`${lang === 'ka' ? 'text-3xl md:text-7xl' : 'text-4xl md:text-7xl'} font-serif leading-[1.1] tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] uppercase transition-all duration-500`}>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#FDF5E6] italic">{t.heroTitle}</span>
-          </h1>
-        </div>
+        {/* 3. COMBINED HERO CONTENT (Title + Conversion Engine) */}
+        <div className="absolute bottom-12 left-6 right-6 md:bottom-24 md:left-16 md:right-16 z-30 flex flex-col md:flex-row md:justify-between items-end pointer-events-none">
+          
+          {/* Hero Typography Overlay */}
+          <div className="w-full md:max-w-[45vw] mb-12 md:mb-0 text-left">
+            <h1 className={`${lang === 'ka' ? 'text-3xl md:text-7xl' : 'text-4xl md:text-7xl'} font-serif leading-[1.1] tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] uppercase transition-all duration-500`}>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#FDF5E6] italic">{t.heroTitle}</span>
+            </h1>
+          </div>
 
-        {/* 3. GLASSMORPHIC CONVERSION ENGINE (Accordion on Mobile) */}
-        <div className="absolute bottom-12 left-6 right-6 md:bottom-24 md:left-auto md:right-16 z-30 pointer-events-auto w-auto md:max-w-sm">
-          <div className="bg-[#0a0a0a]/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex flex-col shadow-2xl relative overflow-hidden group">
-            {/* Header / Trigger */}
-            <button 
-              onClick={() => setIsExpanded(!isExpanded)}
-              disabled={typeof window !== 'undefined' && window.innerWidth >= 768}
-              className="w-full p-4 md:p-6 flex items-center justify-between text-left group/trigger"
-            >
-              <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#D4AF37]">
-                <Sparkles className="w-3 h-3" />
-                <span>{t.elite}</span>
-              </div>
-              <ChevronDown className={`md:hidden w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
-            </button>
-
-            {/* Accordion Body */}
-            <motion.div 
-              initial={false}
-              animate={{ height: (typeof window !== 'undefined' && window.innerWidth >= 768) || isExpanded ? 'auto' : 0 }}
-              className="overflow-hidden md:h-auto"
-            >
-              <div className="px-4 pb-6 md:px-6 md:pb-6 flex flex-col gap-4 border-t border-white/5 md:border-none">
-                <div>
-                  <h3 className="font-serif text-xl md:text-2xl text-white">{t.intensive}</h3>
-                  <p className="text-[0.65rem] md:text-xs text-white/50 tracking-wider mt-1">{t.mastery}</p>
+          {/* GLASSMORPHIC CONVERSION ENGINE (Accordion on Mobile) */}
+          <div className="w-full md:max-w-sm pointer-events-auto">
+            <div className="bg-[#0a0a0a]/60 backdrop-blur-2xl border border-[#D4AF37]/30 flex flex-col shadow-2xl relative overflow-hidden group">
+              {/* Header / Trigger */}
+              <button 
+                onClick={() => setIsExpanded(!isExpanded)}
+                disabled={typeof window !== 'undefined' && window.innerWidth >= 768}
+                className="w-full p-4 md:p-6 flex items-center justify-between text-left group/trigger"
+              >
+                <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#D4AF37]">
+                  <Sparkles className="w-3 h-3" />
+                  <span>{t.elite}</span>
                 </div>
-                <button className="mt-2 w-full bg-[#D4AF37] text-black py-3 px-6 text-xs font-bold uppercase tracking-[0.2em] flex flex-col items-center hover:bg-white transition-colors group">
-                  <span className="flex justify-between items-center w-full">{t.bookGlow} <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
-                  <span className="text-[0.5rem] md:text-[0.6rem] opacity-70 normal-case mt-1">{t.bookGlowSub}</span>
-                </button>
-              </div>
-            </motion.div>
-            
-            {/* Shimmer Effect Background */}
-            <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent group-hover:animate-shimmer pointer-events-none" />
+                <ChevronDown className={`md:hidden w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Accordion Body */}
+              <motion.div 
+                initial={false}
+                animate={{ height: (typeof window !== 'undefined' && window.innerWidth >= 768) || isExpanded ? 'auto' : 0 }}
+                className="overflow-hidden md:h-auto"
+              >
+                <div className="px-4 pb-6 md:px-6 md:pb-6 flex flex-col gap-4 border-t border-white/5 md:border-none">
+                  <div>
+                    <h3 className="font-serif text-xl md:text-2xl text-white">{t.intensive}</h3>
+                    <p className="text-[0.65rem] md:text-xs text-white/50 tracking-wider mt-1">{t.mastery}</p>
+                  </div>
+                  <button className="mt-2 w-full bg-[#D4AF37] text-black py-3 px-6 text-xs font-bold uppercase tracking-[0.2em] flex flex-col items-center hover:bg-white transition-colors group">
+                    <span className="flex justify-between items-center w-full">{t.bookGlow} <MoveRight className="w-4 h-4 transition-transform group-hover:translate-x-1" /></span>
+                    <span className="text-[0.5rem] md:text-[0.6rem] opacity-70 normal-case mt-1">{t.bookGlowSub}</span>
+                  </button>
+                </div>
+              </motion.div>
+              
+              {/* Shimmer Effect Background */}
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#D4AF37]/10 to-transparent group-hover:animate-shimmer pointer-events-none" />
+            </div>
           </div>
         </div>
       </section>
