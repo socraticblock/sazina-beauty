@@ -36,7 +36,7 @@ const dictionary = {
 export default function SazinaFlagship() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [lang, setLang] = useState<"ka" | "en">("ka");
+  const [lang, setLang] = useState<"ka" | "en">("en");
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const dragX = useMotionValue(50); // Start at 50%
